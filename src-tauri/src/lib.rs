@@ -31,11 +31,32 @@ struct OverlayState {
     os: &'static str,
     hotkey: String,
     shortcuts_dir: String,
+    theme: Theme,
 }
 
-#[derive(Default, Deserialize)]
+/// Overlay colors as `#rrggbb`: `primary` for the UI, `secondary` for shortcuts marked `learn`.
+#[derive(Clone, Serialize, Deserialize)]
+struct Theme {
+    primary: String,
+    secondary: String,
+}
+
+impl Default for Theme {
+    fn default() -> Self {
+        Self {
+            primary: "#5eeaff".into(),
+            secondary: "#ff5ec8".into(),
+        }
+    }
+}
+
+/// `<config dir>/config.yaml`
+#[derive(Default, Serialize, Deserialize)]
 struct Config {
+    #[serde(skip_serializing_if = "Option::is_none")]
     hotkey: Option<String>,
+    #[serde(default)]
+    theme: Theme,
 }
 
 struct AppState {
@@ -74,6 +95,7 @@ fn build_state(app: &AppHandle) -> OverlayState {
         os: std::env::consts::OS,
         hotkey: st.hotkey.clone(),
         shortcuts_dir: dir.to_string_lossy().into_owned(),
+        theme: load_config(app).theme,
     }
 }
 
@@ -109,6 +131,21 @@ fn hide_overlay(app: AppHandle) {
 #[tauri::command]
 fn open_shortcuts_dir(app: AppHandle) {
     let _ = app.opener().open_path(shortcuts_dir(&app).to_string_lossy(), None::<&str>);
+}
+
+fn is_hex_color(s: &str) -> bool {
+    s.len() == 7 && s.starts_with('#') && s[1..].chars().all(|c| c.is_ascii_hexdigit())
+}
+
+#[tauri::command]
+fn set_theme(app: AppHandle, theme: Theme) -> Result<(), String> {
+    if !is_hex_color(&theme.primary) || !is_hex_color(&theme.secondary) {
+        return Err("colors must be #rrggbb".into());
+    }
+    let mut config = load_config(&app);
+    config.theme = theme;
+    let yaml = serde_yaml::to_string(&config).map_err(|e| e.to_string())?;
+    std::fs::write(config_dir(&app).join("config.yaml"), yaml).map_err(|e| e.to_string())
 }
 
 /// Creates the user shortcut folder with a short how-to on first start.
@@ -220,7 +257,12 @@ pub fn run() {
                 }
             }
         })
-        .invoke_handler(tauri::generate_handler![current_state, hide_overlay, open_shortcuts_dir])
+        .invoke_handler(tauri::generate_handler![
+            current_state,
+            hide_overlay,
+            open_shortcuts_dir,
+            set_theme
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

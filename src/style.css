@@ -1,14 +1,15 @@
 :root {
   --bg: rgba(6, 10, 18, 0.9);
-  --panel-edge: rgba(94, 234, 255, 0.28);
-  --grid: rgba(94, 234, 255, 0.045);
+  --bg-solid: #060a12;
+  --panel-edge: color-mix(in srgb, var(--accent) 28%, transparent);
+  --grid: color-mix(in srgb, var(--accent) 4.5%, transparent);
   --text: #dbe7f3;
   --muted: #6f8499;
   --dim: #3a4a5c;
   --accent: #5eeaff;
-  --accent-soft: rgba(94, 234, 255, 0.12);
+  --accent-soft: color-mix(in srgb, var(--accent) 12%, transparent);
   --learn: #ff5ec8;
-  --learn-soft: rgba(255, 94, 200, 0.12);
+  --learn-soft: color-mix(in srgb, var(--learn) 12%, transparent);
   --ok: #7dffb0;
   --warn: #ffcc66;
   --cap-bg: linear-gradient(180deg, #1a2433 0%, #111926 100%);

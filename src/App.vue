@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, onUnmounted, ref } from "vue";
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { invoke } from "@tauri-apps/api/core";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import KeyCombo from "./components/KeyCombo.vue";
-import { hotkeyLabel } from "./keys";
-import type { OverlayState, Profile } from "./types";
+import ThemePicker from "./components/ThemePicker.vue";
+import { MODIFIERS, eventKey, hotkeyLabel, keyLabel, normKey } from "./keys";
+import { PRESETS, applyTheme } from "./theme";
+import type { OverlayState, Profile, Shortcut, Theme } from "./types";
 
 const inTauri = "__TAURI_INTERNALS__" in window;
 
@@ -13,6 +15,10 @@ const tab = ref<"app" | "system">("app");
 const filter = ref("");
 // Bumped on every show to replay the entry animation.
 const showId = ref(0);
+// Keys currently held down, as YAML key names ("Ctrl", "Shift", "P", …).
+const pressed = ref(new Set<string>());
+const theme = ref<Theme>(PRESETS[0].theme);
+const showTheme = ref(false);
 
 const active = computed<Profile | null>(() => {
   const s = state.value;
@@ -52,8 +58,39 @@ function applyState(s: OverlayState) {
   state.value = s;
   tab.value = s.profile ? "app" : "system";
   filter.value = "";
+  pressed.value.clear();
+  showTheme.value = false;
+  theme.value = s.theme;
+  applyTheme(s.theme);
   showId.value++;
 }
+
+let saveTimer: number | undefined;
+
+function setTheme(t: Theme) {
+  theme.value = t;
+  applyTheme(t);
+  // Slider drags fire a lot of events; only persist once it settles.
+  clearTimeout(saveTimer);
+  saveTimer = window.setTimeout(() => inTauri && invoke("set_theme", { theme: t }), 300);
+}
+
+/** True if exactly the keys of one step of this shortcut are held down. */
+function isHit(s: Shortcut) {
+  const p = pressed.value;
+  return s.keys.some((chord) => chord.length === p.size && chord.every((k) => p.has(normKey(k))));
+}
+
+const held = computed(() => [...pressed.value]);
+
+// Bring a fully matched shortcut into view.
+watch(
+  () => held.value.join("+"),
+  async () => {
+    await nextTick();
+    document.querySelector("li.hit")?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  },
+);
 
 function hide() {
   if (inTauri) invoke("hide_overlay");
@@ -64,26 +101,43 @@ function openFolder() {
 }
 
 function onKey(e: KeyboardEvent) {
+  pressed.value.add(eventKey(e, state.value?.os ?? ""));
+  const chord = e.ctrlKey || e.metaKey || e.altKey;
+
   if (e.key === "Escape") {
-    if (filter.value) filter.value = "";
+    if (showTheme.value) showTheme.value = false;
+    else if (filter.value) filter.value = "";
     else hide();
-  } else if (e.key === "Tab") {
-    e.preventDefault();
+  } else if (e.key === "Tab" && !chord) {
     if (state.value?.profile) tab.value = tab.value === "app" ? "system" : "app";
-  } else if (e.key === "Backspace") {
+  } else if (e.key === "Backspace" && !chord) {
     filter.value = filter.value.slice(0, -1);
-  } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+  } else if (e.key.length === 1 && e.key !== " " && !chord) {
     filter.value += e.key;
-  } else {
+  } else if (!chord) {
     return;
   }
+  // Swallow combos so the webview doesn't act on them (reload, find, zoom, …).
   e.preventDefault();
+}
+
+function onKeyUp(e: KeyboardEvent) {
+  const k = eventKey(e, state.value?.os ?? "");
+  pressed.value.delete(k);
+  // macOS drops keyup events of other keys while Cmd is held.
+  if (MODIFIERS.has(k)) for (const p of pressed.value) if (!MODIFIERS.has(p)) pressed.value.delete(p);
+}
+
+function clearPressed() {
+  pressed.value.clear();
 }
 
 let unlisten: UnlistenFn | undefined;
 
 onMounted(async () => {
   window.addEventListener("keydown", onKey);
+  window.addEventListener("keyup", onKeyUp);
+  window.addEventListener("blur", clearPressed);
   if (inTauri) {
     unlisten = await listen<OverlayState>("overlay://show", (e) => applyState(e.payload));
     const current = await invoke<OverlayState | null>("current_state");
@@ -98,6 +152,8 @@ onMounted(async () => {
 
 onUnmounted(() => {
   window.removeEventListener("keydown", onKey);
+  window.removeEventListener("keyup", onKeyUp);
+  window.removeEventListener("blur", clearPressed);
   unlisten?.();
 });
 </script>
@@ -142,6 +198,9 @@ onUnmounted(() => {
     <div class="filter" :class="{ active: filter }">
       <span class="prompt">filter:</span>
       <span class="query">{{ filter }}</span><span class="caret" />
+      <span v-if="held.length" class="held">
+        <template v-for="(k, i) in held" :key="k"><span v-if="i">+</span><b>{{ keyLabel(k, state.os) }}</b></template>
+      </span>
       <span class="count">{{ String(total).padStart(2, "0") }} hits</span>
       <span v-if="learnCount" class="count learn">◆ {{ learnCount }} to learn</span>
     </div>
@@ -161,12 +220,12 @@ onUnmounted(() => {
           <li
             v-for="(s, si) in g.shortcuts"
             :key="si"
-            :class="{ learn: s.learn }"
+            :class="{ learn: s.learn, hit: isHit(s) }"
             :style="{ '--d': gi * 60 + si * 22 + 'ms' }"
           >
             <span class="action">{{ s.action }}</span>
             <span class="leader" />
-            <KeyCombo :keys="s.keys" :os="state.os" />
+            <KeyCombo :keys="s.keys" :os="state.os" :pressed="pressed" />
           </li>
         </ul>
       </article>
@@ -179,7 +238,9 @@ onUnmounted(() => {
       <span><kbd>a–z</kbd> filter</span>
       <span><kbd>{{ hotkeyLabel(state.hotkey, state.os) }}</kbd> toggle</span>
       <a class="folder" @click="openFolder">⌁ edit shortcuts</a>
+      <a :class="{ on: showTheme }" @click="showTheme = !showTheme">◐ theme</a>
     </footer>
+    <ThemePicker v-if="showTheme" :theme="theme" @change="setTheme" />
     <div v-if="notice" class="notice">⚠ {{ notice }}</div>
   </main>
 </template>
@@ -195,15 +256,15 @@ onUnmounted(() => {
   border: 1px solid var(--panel-edge);
   border-radius: 14px;
   background:
-    radial-gradient(ellipse 60% 40% at 15% 0%, rgba(94, 234, 255, 0.1), transparent 70%),
-    radial-gradient(ellipse 50% 40% at 100% 100%, rgba(255, 94, 200, 0.07), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 15% 0%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 100% 100%, color-mix(in srgb, var(--learn) 7%, transparent), transparent 70%),
     linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 100% 28px,
     linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 28px 100%,
     var(--bg);
   box-shadow:
     0 0 0 1px rgba(0, 0, 0, 0.6),
-    0 0 40px rgba(94, 234, 255, 0.08),
-    inset 0 0 60px rgba(94, 234, 255, 0.04);
+    0 0 40px color-mix(in srgb, var(--accent) 8%, transparent),
+    inset 0 0 60px color-mix(in srgb, var(--accent) 4%, transparent);
   overflow: hidden;
   animation: boot 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.2);
 }
@@ -236,7 +297,7 @@ onUnmounted(() => {
   pointer-events: none;
   background:
     repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 3px),
-    linear-gradient(180deg, transparent 0%, rgba(94, 234, 255, 0.06) 50%, transparent 100%) 0 -100% / 100% 30% no-repeat;
+    linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--accent) 6%, transparent) 50%, transparent 100%) 0 -100% / 100% 30% no-repeat;
   animation: sweep 6s linear infinite;
 }
 @keyframes sweep {
@@ -294,7 +355,7 @@ h1 {
   font-weight: 600;
   letter-spacing: -0.01em;
   line-height: 1;
-  text-shadow: 0 0 24px rgba(94, 234, 255, 0.25);
+  text-shadow: 0 0 24px color-mix(in srgb, var(--accent) 25%, transparent);
 }
 h1 .prompt { color: var(--accent); margin-right: 4px; }
 
@@ -313,7 +374,7 @@ h1 .prompt { color: var(--accent); margin-right: 4px; }
   color: var(--accent);
   border-color: var(--accent);
   background: var(--accent-soft);
-  box-shadow: 0 0 12px rgba(94, 234, 255, 0.15);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 15%, transparent);
 }
 
 .nomatch {
@@ -396,7 +457,7 @@ li {
   animation: rise 0.3s var(--d) both ease-out;
 }
 li:hover { background: var(--accent-soft); }
-li:hover :deep(kbd) { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px rgba(94, 234, 255, 0.25); }
+li:hover :deep(kbd) { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 25%, transparent); }
 .action { min-width: 0; line-height: 1.35; }
 .leader {
   flex: 1;
@@ -409,7 +470,15 @@ li:hover :deep(kbd) { border-color: var(--accent); color: var(--accent); box-sha
 
 li.learn { background: var(--learn-soft); }
 li.learn .action::before { content: "◆ "; color: var(--learn); }
-li.learn :deep(kbd) { border-color: var(--learn); color: var(--learn); box-shadow: 0 0 10px rgba(255, 94, 200, 0.25); }
+li.learn :deep(kbd) { border-color: var(--learn); color: var(--learn); box-shadow: 0 0 10px color-mix(in srgb, var(--learn) 25%, transparent); }
+/* Pressed keys win over hover/learn styling; in learn rows they glow in the secondary color. */
+li :deep(kbd.down) { color: var(--bg-solid); }
+li.learn :deep(kbd.down) {
+  color: var(--bg-solid);
+  background: var(--learn);
+  border-color: var(--learn);
+  box-shadow: 0 0 14px var(--learn), 0 0 4px var(--learn);
+}
 
 @keyframes rise {
   from { opacity: 0; transform: translateY(4px); }
@@ -437,6 +506,26 @@ footer kbd {
   border-radius: 4px;
 }
 footer .folder { margin-left: auto; }
+footer a.on { text-decoration: underline; }
+
+.held {
+  margin-left: 16px;
+  padding: 1px 8px;
+  font-size: 11px;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  box-shadow: 0 0 10px var(--accent-soft);
+}
+.held b { font-weight: 600; }
+.held span { margin: 0 3px; color: var(--muted); }
+
+/* Exactly this shortcut is being held */
+li.hit {
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  box-shadow: inset 2px 0 0 var(--accent), 0 0 18px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+li.hit .action { color: var(--accent); }
 
 .notice {
   margin-top: 8px;

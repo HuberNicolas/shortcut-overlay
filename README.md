@@ -7,6 +7,8 @@ Fokus ist.
 - Erkennt das fokussierte Programm (VS Code, Firefox, Chrome, Terminal, Dateimanager, JetBrains, Slack, …)
 - Fällt auf System-Shortcuts zurück, wenn es kein Profil gibt – <kbd>Tab</kbd> wechselt jederzeit
 - Tippen filtert live, <kbd>Esc</kbd> schliesst
+- Gedrückte Tasten leuchten auf – hält man genau eine Kombination, wird die Zeile hervorgehoben
+- Theming: Haupt- und Zweitfarbe wählbar (Presets oder Farbregler unter „◐ theme“)
 - Eigene Profile als YAML, Shortcuts zum Lernen mit `learn: true` markieren
 
 Gebaut mit [Tauri 2](https://tauri.app) – Rust im Hintergrund, Vue + TypeScript für das Overlay.
@@ -29,7 +31,15 @@ Nur am Design arbeiten (ohne Rust, mit Beispieldaten im Browser): `npm run dev` 
 ## Bedienung
 
 Die App läuft im Hintergrund mit Tray-Icon. Standard-Hotkey: <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>/</kbd>
-(macOS: <kbd>⌘</kbd><kbd>⌥</kbd><kbd>/</kbd>), änderbar in `config.yaml` im Config-Ordner.
+(macOS: <kbd>⌘</kbd><kbd>⌥</kbd><kbd>/</kbd>). Hotkey und Farben stehen in `config.yaml` im Config-Ordner
+(Linux: `~/.config/dev.hubernicolas.shortcut-overlay/config.yaml`):
+
+```yaml
+hotkey: CommandOrControl+Alt+Slash
+theme:
+  primary: "#5eeaff"     # UI, gedrückte Tasten
+  secondary: "#ff5ec8"   # Shortcuts mit learn: true
+```
 
 ### Ubuntu / GNOME mit Wayland
 

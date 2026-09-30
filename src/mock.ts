@@ -65,4 +65,5 @@ export const mockState: OverlayState = {
   os: "linux",
   hotkey: "CommandOrControl+Alt+Slash",
   shortcuts_dir: "~/.config/dev.hubernicolas.shortcut-overlay/shortcuts",
+  theme: { primary: "#5eeaff", secondary: "#ff5ec8" },
 };

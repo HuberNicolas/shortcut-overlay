@@ -16,6 +16,8 @@
 - [x] Grundgerüst, Overlay-Design (HUD, Filter, Tab App ⇄ System)
 - [x] 8 eingebaute Profile (System, VS Code, Firefox, Chromium, Terminal, Dateimanager, JetBrains, Slack)
 - [x] Eigene Profile im Config-Ordner, Tray-Menü
+- [x] Theming (Haupt-/Zweitfarbe, Presets, in `config.yaml` gespeichert)
+- [x] Gedrückte Tasten leuchten auf, exakte Kombination hebt die Zeile hervor
 - [x] CI + Release-Workflow für alle drei Systeme
 - [ ] Auf Ubuntu/Wayland end-to-end testen
 - [ ] Auf macOS und Windows testen

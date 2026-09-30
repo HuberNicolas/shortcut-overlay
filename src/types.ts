@@ -35,4 +35,10 @@ export interface OverlayState {
   os: "linux" | "macos" | "windows";
   hotkey: string;
   shortcuts_dir: string;
+  theme: Theme;
+}
+
+export interface Theme {
+  primary: string;
+  secondary: string;
 }
