@@ -45,3 +45,7 @@ body,
   display: grid;
   place-items: center;
 }
+
+body.still * {
+  animation: none !important;
+}

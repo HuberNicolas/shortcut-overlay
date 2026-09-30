@@ -144,9 +144,14 @@ onMounted(async () => {
     if (current) applyState(current);
   } else {
     // Plain browser (`npm run dev`): render sample data to work on the design.
+    // For screenshots: `?hold=Ctrl+Shift+P` shows keys as held down, `?still` skips animations.
     const { mockState } = await import("./mock");
+    const params = new URLSearchParams(location.search);
+    document.body.style.background = "#05070b";
+    document.body.classList.toggle("still", params.has("still"));
     await nextTick();
     applyState(mockState);
+    params.get("hold")?.split(" ").forEach((k) => pressed.value.add(k));
   }
 });
 
