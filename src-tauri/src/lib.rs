@@ -153,8 +153,8 @@ fn setup_tray(app: &AppHandle) -> tauri::Result<()> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     // On GNOME/Wayland native windows can't stay on top or be centered;
-    // running through XWayland fixes both.
-    if focus::is_gnome_wayland() && std::env::var_os("GDK_BACKEND").is_none() {
+    // running through XWayland fixes both. Overrides an inherited GDK_BACKEND=wayland.
+    if focus::is_gnome_wayland() {
         std::env::set_var("GDK_BACKEND", "x11");
     }
 
