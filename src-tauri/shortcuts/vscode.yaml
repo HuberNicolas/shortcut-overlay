@@ -1,0 +1,33 @@
+id: vscode
+name: Visual Studio Code
+match: [code, code-oss, codium, vscodium, "code - insiders", "visual studio code", electron-code]
+groups:
+  - name: Essentials
+    shortcuts:
+      - { keys: "Mod+Shift+P", action: "Command palette" }
+      - { keys: "Mod+P", action: "Quick open file" }
+      - { keys: "Mod+,", action: "Settings" }
+      - { keys: "Mod+K Mod+S", action: "Keyboard shortcuts" }
+      - { keys: "Ctrl+`", action: "Toggle terminal" }
+      - { keys: "Mod+B", action: "Toggle sidebar" }
+      - { keys: "Mod+Shift+F", action: "Search in all files" }
+  - name: Editing
+    shortcuts:
+      - { keys: "Mod+D", action: "Select next occurrence" }
+      - { keys: "Mod+Shift+L", action: "Select all occurrences" }
+      - { keys: "Alt+Click", action: "Add cursor" }
+      - { keys: "Alt+Up", action: "Move line up" }
+      - { keys: "Shift+Alt+Down", linux: "Ctrl+Shift+Alt+Down", action: "Duplicate line down" }
+      - { keys: "Mod+Shift+K", action: "Delete line" }
+      - { keys: "Mod+/", action: "Toggle comment" }
+      - { keys: "Shift+Alt+F", linux: "Ctrl+Shift+I", action: "Format document" }
+      - { keys: "Mod+.", action: "Quick fix" }
+  - name: Navigation
+    shortcuts:
+      - { keys: "F12", action: "Go to definition" }
+      - { keys: "F2", action: "Rename symbol" }
+      - { keys: "Mod+Shift+O", action: "Go to symbol in file" }
+      - { keys: "Ctrl+G", action: "Go to line" }
+      - { keys: "Alt+Left", linux: "Ctrl+Alt+-", mac: "Ctrl+-", action: "Navigate back" }
+      - { keys: "Mod+\\", action: "Split editor" }
+      - { keys: "Mod+Shift+T", action: "Reopen closed editor" }

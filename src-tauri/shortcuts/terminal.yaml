@@ -1,0 +1,29 @@
+id: terminal
+name: Terminal
+match: [gnome-terminal, gnome-terminal-server, ptyxis, ptyxis-agent, kgx, "gnome console", konsole, tilix, terminator, alacritty, kitty, wezterm, wezterm-gui, ghostty, terminal, iterm2, windowsterminal, "windows terminal"]
+groups:
+  - name: Window
+    shortcuts:
+      - { keys: "Ctrl+Shift+C", mac: "Cmd+C", action: "Copy" }
+      - { keys: "Ctrl+Shift+V", mac: "Cmd+V", action: "Paste" }
+      - { keys: "Ctrl+Shift+T", mac: "Cmd+T", action: "New tab" }
+      - { keys: "Ctrl+Shift+W", mac: "Cmd+W", action: "Close tab" }
+      - { keys: "Ctrl+PageDown", mac: "Cmd+Shift+]", windows: "Ctrl+Tab", action: "Next tab" }
+      - { keys: "Ctrl+Shift+F", mac: "Cmd+F", action: "Find" }
+      - { keys: "Ctrl+Plus", mac: "Cmd+Plus", action: "Bigger font" }
+  - name: Shell line editing
+    shortcuts:
+      - { keys: "Ctrl+R", action: "Search command history" }
+      - { keys: "Ctrl+A", action: "Jump to line start", os: [linux, macos] }
+      - { keys: "Ctrl+E", action: "Jump to line end", os: [linux, macos] }
+      - { keys: "Ctrl+W", action: "Delete word before cursor", os: [linux, macos] }
+      - { keys: "Ctrl+U", action: "Delete to line start", os: [linux, macos] }
+      - { keys: "Ctrl+K", action: "Delete to line end", os: [linux, macos] }
+      - { keys: "Alt+.", action: "Insert last argument", os: [linux, macos] }
+      - { keys: "Tab Tab", action: "Show completions", os: [linux, macos] }
+  - name: Processes
+    shortcuts:
+      - { keys: "Ctrl+C", action: "Interrupt running command" }
+      - { keys: "Ctrl+D", action: "Exit shell (EOF)" }
+      - { keys: "Ctrl+Z", action: "Suspend (resume: fg)", os: [linux, macos] }
+      - { keys: "Ctrl+L", action: "Clear screen" }

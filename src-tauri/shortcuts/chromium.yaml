@@ -1,0 +1,29 @@
+id: chromium
+name: Chrome / Chromium
+match: [chrome, google-chrome, "google chrome", chromium, chromium-browser, brave, brave-browser, "brave browser", msedge, microsoft-edge, "microsoft edge", vivaldi, vivaldi-bin, opera]
+groups:
+  - name: Tabs
+    shortcuts:
+      - { keys: "Mod+T", action: "New tab" }
+      - { keys: "Mod+W", action: "Close tab" }
+      - { keys: "Mod+Shift+T", action: "Reopen closed tab" }
+      - { keys: "Ctrl+Tab", action: "Next tab" }
+      - { keys: "Mod+1…8", action: "Jump to tab 1–8" }
+      - { keys: "Mod+Shift+A", action: "Search tabs" }
+      - { keys: "Mod+Shift+N", action: "New incognito window" }
+  - name: Browsing
+    shortcuts:
+      - { keys: "Mod+L", action: "Focus address bar" }
+      - { keys: "Mod+F", action: "Find in page" }
+      - { keys: "Mod+Shift+R", action: "Reload, skip cache" }
+      - { keys: "Alt+Left", mac: "Cmd+[", action: "Back" }
+      - { keys: "Mod+D", action: "Bookmark page" }
+      - { keys: "Mod+Shift+B", action: "Toggle bookmarks bar" }
+      - { keys: "Mod+H", mac: "Cmd+Y", action: "History" }
+      - { keys: "Mod+J", mac: "Cmd+Shift+J", action: "Downloads" }
+  - name: Developer
+    shortcuts:
+      - { keys: "Mod+Shift+I", mac: "Cmd+Alt+I", action: "Developer tools" }
+      - { keys: "Mod+Shift+J", mac: "Cmd+Alt+J", action: "JavaScript console" }
+      - { keys: "Mod+Shift+C", mac: "Cmd+Shift+C", action: "Inspect element" }
+      - { keys: "Mod+U", mac: "Cmd+Alt+U", action: "View source" }

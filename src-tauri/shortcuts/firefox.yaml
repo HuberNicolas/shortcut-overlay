@@ -1,0 +1,28 @@
+id: firefox
+name: Firefox
+match: [firefox, firefox-esr, firefox-bin, librewolf, zen]
+groups:
+  - name: Tabs
+    shortcuts:
+      - { keys: "Mod+T", action: "New tab" }
+      - { keys: "Mod+W", action: "Close tab" }
+      - { keys: "Mod+Shift+T", action: "Reopen closed tab" }
+      - { keys: "Ctrl+Tab", action: "Next tab" }
+      - { keys: "Ctrl+Shift+Tab", action: "Previous tab" }
+      - { keys: "Mod+1…8", mac: "Cmd+1…8", linux: "Alt+1…8", action: "Jump to tab 1–8" }
+      - { keys: "Mod+Shift+P", action: "New private window" }
+  - name: Browsing
+    shortcuts:
+      - { keys: "Mod+L", action: "Focus address bar" }
+      - { keys: "Mod+F", action: "Find in page" }
+      - { keys: "Mod+Shift+R", action: "Reload, skip cache" }
+      - { keys: "Alt+Left", mac: "Cmd+[", action: "Back" }
+      - { keys: "Mod+D", action: "Bookmark page" }
+      - { keys: "Mod+Shift+B", action: "Toggle bookmarks toolbar" }
+      - { keys: "F9", mac: "Cmd+Alt+R", action: "Reader view" }
+  - name: View & tools
+    shortcuts:
+      - { keys: "Mod+Plus", action: "Zoom in" }
+      - { keys: "Mod+0", action: "Reset zoom" }
+      - { keys: "Mod+Shift+I", mac: "Cmd+Alt+I", action: "Developer tools" }
+      - { keys: "Mod+Shift+Delete", action: "Clear recent history" }

@@ -1,0 +1,31 @@
+# Generic desktop shortcuts, shown when no app profile matches (Tab switches to it anytime).
+id: system
+name: System
+groups:
+  - name: Windows & apps
+    shortcuts:
+      - { keys: "Alt+Tab", mac: "Cmd+Tab", action: "Switch apps" }
+      - { keys: "Alt+`", mac: "Cmd+`", action: "Switch windows of the same app", os: [linux, macos] }
+      - { keys: "Super", mac: "Cmd+Space", action: "Search & launch apps" }
+      - { keys: "Alt+F4", mac: "Cmd+Q", action: "Close window / quit app" }
+      - { keys: "Super+H", mac: "Cmd+M", windows: "Super+Down", action: "Minimize window" }
+      - { keys: "Super+Up", mac: "Fn+Ctrl+F", action: "Maximize window" }
+      - { keys: "Super+Left", mac: "Fn+Ctrl+Left", action: "Tile window left" }
+      - { keys: "Super+Right", mac: "Fn+Ctrl+Right", action: "Tile window right" }
+      - { keys: "Super+D", mac: "Cmd+F3", action: "Show desktop" }
+  - name: Workspaces
+    shortcuts:
+      - { keys: "Super+PageDown", mac: "Ctrl+Right", windows: "Super+Ctrl+Right", action: "Next workspace / desktop" }
+      - { keys: "Super+PageUp", mac: "Ctrl+Left", windows: "Super+Ctrl+Left", action: "Previous workspace / desktop" }
+      - { keys: "Super+Shift+PageDown", action: "Move window to next workspace", os: [linux] }
+      - { keys: "Super+Tab", mac: "Ctrl+Up", action: "Overview of all windows", os: [macos, windows] }
+  - name: Tools
+    shortcuts:
+      - { keys: "Print", mac: "Cmd+Shift+4", windows: "Super+Shift+S", action: "Screenshot of an area" }
+      - { keys: "Super+L", mac: "Ctrl+Cmd+Q", action: "Lock screen" }
+      - { keys: "Ctrl+.", mac: "Ctrl+Cmd+Space", windows: "Super+.", action: "Emoji picker" }
+      - { keys: "Super+V", action: "Notifications", os: [linux] }
+      - { keys: "Super+V", action: "Clipboard history", os: [windows] }
+      - { keys: "Ctrl+Alt+T", action: "Open terminal", os: [linux] }
+      - { keys: "Super+E", action: "Open File Explorer", os: [windows] }
+      - { keys: "Ctrl+Shift+Esc", mac: "Cmd+Alt+Esc", action: "Task manager / force quit", os: [macos, windows] }

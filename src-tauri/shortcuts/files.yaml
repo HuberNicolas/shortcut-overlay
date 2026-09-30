@@ -1,0 +1,26 @@
+id: files
+name: File manager
+match: [nautilus, org.gnome.nautilus, files, dolphin, nemo, thunar, finder, explorer, "windows explorer"]
+groups:
+  - name: Navigate
+    shortcuts:
+      - { keys: "Ctrl+L", mac: "Cmd+Shift+G", action: "Type a path / go to folder" }
+      - { keys: "Alt+Up", mac: "Cmd+Up", action: "Parent folder" }
+      - { keys: "Alt+Left", mac: "Cmd+[", action: "Back" }
+      - { keys: "Mod+F", windows: "Ctrl+E", action: "Search" }
+      - { keys: "Mod+T", action: "New tab" }
+      - { keys: "Super+E", action: "Open File Explorer anywhere", os: [windows] }
+  - name: Files
+    shortcuts:
+      - { keys: "F2", mac: "Enter", action: "Rename" }
+      - { keys: "Mod+Shift+N", action: "New folder" }
+      - { keys: "Delete", mac: "Cmd+Backspace", action: "Move to trash" }
+      - { keys: "Space", action: "Quick look / preview", os: [linux, macos] }
+      - { keys: "Alt+P", action: "Toggle preview pane", os: [windows] }
+      - { keys: "Cmd+Alt+V", action: "Move copied files here", os: [macos] }
+      - { keys: "Alt+Enter", mac: "Cmd+I", linux: "Ctrl+I", action: "Properties / info" }
+  - name: View
+    shortcuts:
+      - { keys: "Ctrl+H", mac: "Cmd+Shift+.", action: "Show hidden files", os: [linux, macos] }
+      - { keys: "Ctrl+1", mac: "Cmd+1", windows: "Ctrl+Shift+6", action: "List view" }
+      - { keys: "Ctrl+2", mac: "Cmd+2", windows: "Ctrl+Shift+2", action: "Grid / icon view" }

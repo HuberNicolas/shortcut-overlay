@@ -1,0 +1,21 @@
+id: slack
+name: Slack
+match: [slack]
+groups:
+  - name: Navigate
+    shortcuts:
+      - { keys: "Mod+K", action: "Jump to conversation" }
+      - { keys: "Mod+Shift+A", action: "All unreads" }
+      - { keys: "Mod+Shift+T", action: "Threads" }
+      - { keys: "Mod+Shift+K", action: "Direct messages" }
+      - { keys: "Alt+Up", action: "Previous channel" }
+      - { keys: "Alt+Shift+Up", action: "Previous unread channel" }
+      - { keys: "Mod+G", action: "Search" }
+      - { keys: "Mod+/", action: "All Slack shortcuts" }
+  - name: Messages
+    shortcuts:
+      - { keys: "Up", action: "Edit your last message" }
+      - { keys: "Shift+Enter", action: "New line" }
+      - { keys: "Mod+U", action: "Upload file" }
+      - { keys: "Mod+Shift+C", action: "Inline code" }
+      - { keys: "Mod+Shift+Y", action: "Set status" }

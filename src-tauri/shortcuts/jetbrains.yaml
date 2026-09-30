@@ -1,0 +1,30 @@
+id: jetbrains
+name: JetBrains IDE
+match: [idea, idea64, "intellij idea", pycharm, pycharm64, webstorm, webstorm64, goland, goland64, clion, clion64, rider, rider64, phpstorm, phpstorm64, datagrip, datagrip64, rustrover, rustrover64, rubymine, rubymine64]
+groups:
+  - name: Find anything
+    shortcuts:
+      - { keys: "Shift Shift", action: "Search everywhere" }
+      - { keys: "Mod+Shift+A", action: "Find action" }
+      - { keys: "Ctrl+Shift+N", mac: "Cmd+Shift+O", action: "Go to file" }
+      - { keys: "Ctrl+N", mac: "Cmd+O", action: "Go to class" }
+      - { keys: "Mod+E", action: "Recent files" }
+      - { keys: "Mod+Shift+F", action: "Find in files" }
+  - name: Code
+    shortcuts:
+      - { keys: "Alt+Enter", action: "Show context actions / fixes" }
+      - { keys: "Ctrl+Alt+Shift+T", mac: "Ctrl+T", action: "Refactor this…" }
+      - { keys: "Shift+F6", action: "Rename" }
+      - { keys: "Mod+Alt+L", action: "Reformat code" }
+      - { keys: "Ctrl+Alt+O", action: "Optimize imports" }
+      - { keys: "Ctrl+W", mac: "Alt+Up", action: "Extend selection" }
+      - { keys: "Mod+D", action: "Duplicate line" }
+      - { keys: "Ctrl+Y", mac: "Cmd+Backspace", action: "Delete line" }
+      - { keys: "Mod+/", action: "Toggle comment" }
+      - { keys: "Mod+B", action: "Go to declaration" }
+  - name: Run & tools
+    shortcuts:
+      - { keys: "Shift+F10", mac: "Ctrl+R", action: "Run" }
+      - { keys: "Shift+F9", mac: "Ctrl+D", action: "Debug" }
+      - { keys: "Alt+F12", action: "Terminal" }
+      - { keys: "Ctrl+Alt+S", mac: "Cmd+,", action: "Settings" }
